@@ -1,0 +1,19 @@
+{
+  "name": "project2solution",
+  "version": "1.0.0",
+  "description": "Udacity Blockchain Develeoper Course - Project 2",
+  "main": "levelSandbox.js",
+  "scripts": {
+    "test": "NODE_ENV=test mocha --recursive './{,!(node_modules)/**/}*.spec.js'"
+  },
+  "author": "",
+  "license": "BSD",
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0"
+  },
+  "dependencies": {
+    "crypto-js": "^3.1.9-1",
+    "level": "^4.0.0"
+  }
+}
