@@ -94,5 +94,12 @@ class Blockchain{
       } else {
         console.log('No errors detected');
       }
+
+      return errorLog.length;
     }
+}
+
+module.exports = {
+  Block,
+  Blockchain
 }
