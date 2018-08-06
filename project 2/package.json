@@ -2,7 +2,7 @@
   "name": "project2solution",
   "version": "1.0.0",
   "description": "Udacity Blockchain Develeoper Course - Project 2",
-  "main": "levelSandbox.js",
+  "main": "simpleChain.js",
   "scripts": {
     "test": "NODE_ENV=test mocha --recursive './{,!(node_modules)/**/}*.spec.js'"
   },
