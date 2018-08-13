@@ -38,8 +38,6 @@ describe('simple chain', function() {
       let firstBlock = await blockchain.getBlock(1);
 
       expect(firstBlock.height).to.equal(blockchain.getBlockHeight());
-      // Todo - This could be wrong, I need to think about this more
-      // expect(firstBlock.height).to.equal(blockchain.getBlockHeight() - 1);
     });
 
     it('should set a valid hash for the block being added to the chain', async () => {
@@ -107,7 +105,6 @@ describe('simple chain', function() {
 
   describe('validate blockchain', () => {
     beforeEach(() => {
-      // setup blockchain
       for (var i = 0; i <= 10; i++) {
         blockchain.addBlock(new simpleChain.Block('test data ' + i));
       }
