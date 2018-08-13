@@ -18,8 +18,13 @@ function getLevelDBData(key){
   db.get(key, function(err, value) {
     if (err) return console.log('Not found!', err);
     console.log('Value = ' + value);
+    return value;
   })
 }
+
+// function getLevelDBData(key, callback){
+//   db.get(key, callback);
+// }
 
 // Add data to levelDB with value
 function addDataToLevelDB(value) {
@@ -46,9 +51,14 @@ function addDataToLevelDB(value) {
 |  ===========================================================================*/
 
 
-(function theLoop (i) {
-  setTimeout(function () {
-    addDataToLevelDB('Testing data');
-    if (--i) theLoop(i);
-  }, 100);
-})(10);
+// (function theLoop (i) {
+//   setTimeout(function () {
+//     addDataToLevelDB('Testing data');
+//     if (--i) theLoop(i);
+//   }, 100);
+// })(10);
+
+module.exports = {
+  addLevelDBData,
+  getLevelDBData
+}

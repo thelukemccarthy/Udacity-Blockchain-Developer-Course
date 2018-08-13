@@ -10,7 +10,8 @@
   "license": "BSD",
   "devDependencies": {
     "chai": "^4.1.2",
-    "mocha": "^5.2.0"
+    "mocha": "^5.2.0",
+    "require-inject": "^1.4.3"
   },
   "dependencies": {
     "crypto-js": "^3.1.9-1",
