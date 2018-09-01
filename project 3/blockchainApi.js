@@ -29,7 +29,7 @@ app.post('/block', async (req, res) => {
     .catch(error => {
     });
 
-  res.json(JSON.stringify(newBlock));
+  res.json(newBlock);
 });
 
 app.listen(8000, () => console.log('blockchainApi listening on port 8000!'));
