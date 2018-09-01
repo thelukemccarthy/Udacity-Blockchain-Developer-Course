@@ -16,6 +16,12 @@ run the API
 
 ``` $ npm install ```
 
+### API Framework Used
+The ExpressJS framework was used to build the API. Documentation can be found at [https://expressjs.com/en/4x/api.html]()
+
+### Running the Unit Test
+``` npm run test ```
+
 ### Running the API
 ``` $ node ./blockchainApi.js ```
 
