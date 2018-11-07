@@ -37,10 +37,8 @@ class Blockchain{
   async addBlock(newBlock){
     // Block height
     newBlock.height = this.chainLength;
-
     // UTC timestamp
     newBlock.time = new Date().getTime().toString().slice(0,-3);
-
     // previous block hash
     if(this.chainLength > 0){
       let previousBlock = await this.getBlock(newBlock.height - 1);
@@ -49,13 +47,14 @@ class Blockchain{
 
     // Block hash with SHA256 using newBlock and converting to a string
     newBlock.hash = SHA256(JSON.stringify(newBlock)).toString();
-
     // Adding block object to chain
     this.chainLength = this.chainLength + 1
     await db.put(newBlock.height, JSON.stringify(newBlock))
       .catch((err) => {
         console.log('Block ' + key + ' submission failed', err)
       });
+
+      return newBlock;
   }
 
   // Get block height
