@@ -1,0 +1,24 @@
+{
+  "name": "project3solution",
+  "version": "1.0.0",
+  "description": "Udacity Blockchain Develeoper Course - Project 4",
+  "main": "blockchainApi.js",
+  "scripts": {
+    "start": "node blockchainApi.js",
+    "test": "NODE_ENV=test mocha --recursive './{,!(node_modules)/**/}*.spec.js'"
+  },
+  "author": "Luke McCarthy",
+  "license": "BSD",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "crypto-js": "^3.1.9-1",
+    "express": "^4.16.3",
+    "level": "^4.0.0"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0",
+    "require-inject": "^1.4.3",
+    "sinon": "^6.1.5"
+  }
+}
