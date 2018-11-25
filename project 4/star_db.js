@@ -19,7 +19,12 @@ const get = async (key) => {
   return value;
 };
 
+const del = async (key) => {
+  await db.del(key);
+};
+
 module.exports = {
   add,
-  get
+  get,
+  del,
 }

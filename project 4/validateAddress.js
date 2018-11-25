@@ -132,6 +132,10 @@ const isAddressVerified = (validationObj) => {
 
 };
 
+const removeValidation = async (address) => {
+  await starDB.del(address);
+};
+
 module.exports = {
   getExistingValidation,
   saveValidation,
@@ -140,4 +144,5 @@ module.exports = {
   updateValidationWindow,
   createSignatureResponse,
   isAddressVerified,
+  removeValidation,
 };

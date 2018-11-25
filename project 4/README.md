@@ -270,7 +270,8 @@ Example timeout response
 ###### Post your new star    
 Once your address has been verified you can add your star to the blockchain. Post a json object with your address and 
 star details. If you don't register the star before the validation times out you will need to start the process over 
-again. You can use the same address to register more than one star
+again. You can use the same address to register more than one star, however you will nedd to verify your address after 
+adding each star to the DB.
 
 **NB** the story will be truncated if it is longer than 250 character
   

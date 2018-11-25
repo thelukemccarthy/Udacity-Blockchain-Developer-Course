@@ -93,6 +93,8 @@ app.post('/block', async (req, res) => {
     .catch(error => {
     });
 
+  await validateAddress.removeValidation(address);
+
   res.json(newBlock);
 });
 
