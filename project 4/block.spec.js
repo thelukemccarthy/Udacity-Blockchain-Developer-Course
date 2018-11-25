@@ -10,12 +10,19 @@ describe('simple chain', function() {
   });
 
   describe('Block', () => {
-    it('is created when the blockchain is created', async () => {
+    it('null block has the expected values', async () => {
       const expectedNullBlock = {
         'hash': '',
         'height': -1,
-        'body': '',
-        'time':'',
+        'body': {
+          'address': '',
+          'star': {
+            'dec': '',
+            'ra': '',
+            'story': ''
+          },
+        },
+        'time': -1,
         'previousBlockHash':''
       };
 

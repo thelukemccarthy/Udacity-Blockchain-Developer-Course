@@ -2,17 +2,37 @@ const SHA256 = require('crypto-js/sha256');
 const Block = require('./block');
 
 const level = require('level');
-const chainDB = './chaindata';
-const db = level(chainDB);
+const dbName = './chaindata';
+const db = level(dbName);
 
 class Blockchain{
   constructor(){
     this.chain = [];
     this.chainLength = 0;
-    this.addBlock(new Block.Block("First block in the chain - Genesis block"));
+
+    const genesisBlock = Block.Block.createGenesisBlock();
+
+    this.addBlock(genesisBlock);
   }
 
-  async addBlock(newBlock){
+  createBlockToStore(data) {
+    const star = Object.assign({star: {}}, data);
+    star.star.story = data && data.star && data.star.story && data.star.story.substring(0, 250) || '';
+    star.star.story = Buffer.from(star.star.story, 'utf8').toString('hex');
+
+    return {
+      'hash': '',
+      'body': {
+        'address': star.address,
+        'star': star.star
+      },
+      'time': 0,
+      'previousBlockHash': ''
+    };
+  }
+
+  async addBlock(requestData){
+    const newBlock =  this.createBlockToStore(requestData)
     newBlock.height = this.chainLength;
     newBlock.time = new Date().getTime().toString().slice(0,-3);
 
@@ -23,7 +43,7 @@ class Blockchain{
 
     newBlock.hash = SHA256(JSON.stringify(newBlock)).toString();
 
-    this.chainLength = this.chainLength + 1
+    this.chainLength = this.chainLength + 1;
     await db.put(newBlock.height, JSON.stringify(newBlock))
       .catch((err) => {
         console.log('Block ' + key + ' submission failed', err)
@@ -43,7 +63,35 @@ class Blockchain{
       })
       .catch(error => { console.log('unhandledRejection', error) });
 
+    if(value && value.body && value.body.star && value.body.star.story){
+      value.body.star.storyDecoded = Buffer.from(value.body.star.story, 'hex').toString('utf8');
+    }
+
     return value;
+  }
+
+  async getBlocksByAddress(blockAddress){
+    let result = []
+    for(let i = 0; i < this.chainLength; i++) {
+      const block = await this.getBlock(i);
+      if(block.body.address === blockAddress){
+        result.push(block);
+      }
+    }
+
+    return result;
+  }
+
+
+  async getBlockByHash(blockHash){
+    for(let i = 0; i < this.chainLength; i++) {
+      const block = await this.getBlock(i);
+      if(block.hash === blockHash){
+        return block
+      }
+    }
+
+    return undefined;
   }
 
   async validateBlock(blockHeight){

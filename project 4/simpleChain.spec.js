@@ -12,12 +12,25 @@ describe('simple chain', function() {
     blockchain = new simpleChain.Blockchain();
   });
 
+  const createBlockBody = story => ({
+      'address': '',
+      'star': {
+        'dec': '',
+        'ra': '',
+        'story': story,
+      }
+  })
+
+  const decodeFromHex = (value) => Buffer.from(value, 'hex').toString('utf8')
+
+  const GENESIS_BLOCK_TEXT_ENCODED_IN_HEX = '466972737420626c6f636b20696e2074686520636861696e202d2047656e6573697320626c6f636b';
+
   const getBlocks = index => {
     const blocks = [
-      {"hash":"d9622f01bf654ecdc9ed8b957cf15e6f356d3a362a6c8a6fad61fa377ae3013b","height":0,"body":"First block in the chain - Genesis block","time":"1535717009","previousBlockHash":""},
-      {"hash":"90ebe996fa97b02e83497dd268a140c66d60bf95a8d2d597a7202f9003be2b85","height":1,"body":"test data 10","time":"1535715696","previousBlockHash":"c5bacf73ba4ea6fb466701825cd91454a3647a4ba2951e0f668343ad8d48cdd6"},
-      {"hash":"853cd41fa6f02f155241585699add6fafb83764860211209b09a7083ae0a18c5","height":2,"body":"Second block","time":"1535715696","previousBlockHash":"67900079669d9e0588ea1b89c9774f095af5e0fef46c66547d1e539821e5ae64"},
-      {"hash":"656f5d1685d858bbe1fb12458d02df0c18214ff533b09315d34964e4a54ada4e","height":3,"body":"Third block","time":"1535715696","previousBlockHash":"853cd41fa6f02f155241585699add6fafb83764860211209b09a7083ae0a18c5"}
+      {"hash":"d9622f01bf654ecdc9ed8b957cf15e6f356d3a362a6c8a6fad61fa377ae3013b","height":0,"body":createBlockBody("First block in the chain - Genesis block"),"time":"1535717009","previousBlockHash":""},
+      {"hash":"90ebe996fa97b02e83497dd268a140c66d60bf95a8d2d597a7202f9003be2b85","height":1,"body":createBlockBody("test data 10"),"time":"1535715696","previousBlockHash":"c5bacf73ba4ea6fb466701825cd91454a3647a4ba2951e0f668343ad8d48cdd6"},
+      {"hash":"853cd41fa6f02f155241585699add6fafb83764860211209b09a7083ae0a18c5","height":2,"body":createBlockBody("Second block"),"time":"1535715696","previousBlockHash":"67900079669d9e0588ea1b89c9774f095af5e0fef46c66547d1e539821e5ae64"},
+      {"hash":"656f5d1685d858bbe1fb12458d02df0c18214ff533b09315d34964e4a54ada4e","height":3,"body":createBlockBody("Third block"),"time":"1535715696","previousBlockHash":"853cd41fa6f02f155241585699add6fafb83764860211209b09a7083ae0a18c5"}
     ];
 
     return blocks[index];
@@ -29,7 +42,49 @@ describe('simple chain', function() {
 
       let genesisBlock = await blockchain.getBlock(0);
 
-      expect(genesisBlock.body).to.equal('First block in the chain - Genesis block');
+      expect(decodeFromHex(genesisBlock.body.star.story)).to.equal('First block in the chain - Genesis block');
+    });
+  });
+
+  describe('createBlockToStore', () => {
+    const defaultStar = {
+      "address": "1FeNfPF9w31VbQMTcjMmZikexvpovSKZis",
+      "star": {
+        "dec": "-26° 29' 24.9",
+        "ra": "16h 29m 1.0s",
+        "story": "This is 100 characters long 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 123456" +
+          "This is 100 characters long 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 123456" +
+          "This is 100 characters long 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 123456" +
+          "This is 100 characters long 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 123456" +
+          "This is 100 characters long 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 123456" +
+          "This is 100 characters long 1234567890 1234567890 1234567890 1234567890 1234567890 1234567890 123456"
+      }
+    }
+
+    it('given the defaultStar when createBlockToStore is called the length of the story should be truncated to 500 characters', () => {
+      const result = blockchain.createBlockToStore(defaultStar);
+
+      expect(result.body.star.story.length).to.equal(500);
+    });
+
+    it('given the defaultStar when createBlockToStore is called the story should be returned as a hex encoded string', () => {
+      const input = defaultStar.star.story.substring(0, 250);
+      const expected = Buffer.from(input, 'utf8').toString('hex');
+
+      const result = blockchain.createBlockToStore(defaultStar);
+
+      expect(result.body.star.story).to.equal(expected);
+    });
+
+    it('given the defaultStar when createBlockToStore is called the object returned should have all fields defined', () => {
+      const result = blockchain.createBlockToStore(defaultStar);
+
+      expect(result.hash).to.equal('');
+      expect(result.body.address).to.equal(defaultStar.address);
+      expect(result.body.star.dec).to.equal(defaultStar.star.dec);
+      expect(result.body.star.ra).to.equal(defaultStar.star.ra);
+      expect(result.time).to.equal(0);
+      expect(result.previousBlockHash).to.equal('');
     });
   });
 
@@ -69,13 +124,13 @@ describe('simple chain', function() {
 
   describe('getBlock', () => {
     it('return the correct block', async ()=> {
-      await blockchain.addBlock(new Block('First block'));
-      await blockchain.addBlock(new Block('Second block'));
-      await blockchain.addBlock(new Block('Third block'));
+      await blockchain.addBlock(createBlockBody('First block'));
+      await blockchain.addBlock(createBlockBody('Second block'));
+      await blockchain.addBlock(createBlockBody('Third block'));
 
-      expect((await blockchain.getBlock(1)).body).to.equal('First block');
-      expect((await blockchain.getBlock(2)).body).to.equal('Second block');
-      expect((await blockchain.getBlock(3)).body).to.equal('Third block');
+      expect(decodeFromHex((await blockchain.getBlock(1)).body.star.story)).to.equal('First block');
+      expect(decodeFromHex((await blockchain.getBlock(2)).body.star.story)).to.equal('Second block');
+      expect(decodeFromHex((await blockchain.getBlock(3)).body.star.story)).to.equal('Third block');
     });
   });
 
@@ -100,10 +155,11 @@ describe('simple chain', function() {
     });
 
     it('when a block is tampered with it should fail validation', async () => {
+      // this isn't a good way to test this as it can cause the tests to fail sometimes, I should change this to use requireInject
       blockchain.getBlock = (index) => {
         const blocks = [
-            {"hash":"d9622f01bf654ecdc9ed8b957cf15e6f356d3a362a6c8a6fad61fa377ae3013b","height":0,"body":"First block in the chain - Genesis block","time":"1535717009","previousBlockHash":""},
-            {"hash":"90ebe996fa97b02e83497dd268a140c66d60bf95a8d2d597a7202f9003be2b85","height":1,"body":"Tampered Block!","time":"1535715696","previousBlockHash":"c5bacf73ba4ea6fb466701825cd91454a3647a4ba2951e0f668343ad8d48cdd6"}
+            {"hash":"d9622f01bf654ecdc9ed8b957cf15e6f356d3a362a6c8a6fad61fa377ae3013b","height":0,"body":createBlockBody("First block in the chain - Genesis block"),"time":"1535717009","previousBlockHash":""},
+            {"hash":"90ebe996fa97b02e83497dd268a140c66d60bf95a8d2d597a7202f9003be2b85","height":1,"body":createBlockBody("Tampered Block!"),"time":"1535715696","previousBlockHash":"c5bacf73ba4ea6fb466701825cd91454a3647a4ba2951e0f668343ad8d48cdd6"}
           ];
 
         return blocks[index];
@@ -114,14 +170,17 @@ describe('simple chain', function() {
     });
 
     it('when a block is tampered with previous blocks should validate', async () => {
+      // this isn't a good way to test this as it can cause the tests to fail sometimes, I should change this to use requireInject
       blockchain.getBlock = (index) => {
         const blocks = [
-          {"hash":"d9622f01bf654ecdc9ed8b957cf15e6f356d3a362a6c8a6fad61fa377ae3013b","height":0,"body":"First block in the chain - Genesis block","time":"1535717009","previousBlockHash":""},
-          {"hash":"90ebe996fa97b02e83497dd268a140c66d60bf95a8d2d597a7202f9003be2b85","height":1,"body":"Tampered Block!","time":"1535715696","previousBlockHash":"c5bacf73ba4ea6fb466701825cd91454a3647a4ba2951e0f668343ad8d48cdd6"}
+          {"hash":"fde78da7bb257855c5c742f910825691938ce4ac4de3e8dfa85706a9a2617342","height":0,"body":createBlockBody("First block in the chain - Genesis block"),"time":"1535717009","previousBlockHash":""},
+          {"hash":"90ebe996fa97b02e83497dd268a140c66d60bf95a8d2d597a7202f9003be2b85","height":1,"body":createBlockBody("Tampered Block!"),"time":"1535715696","previousBlockHash":"c5bacf73ba4ea6fb466701825cd91454a3647a4ba2951e0f668343ad8d48cdd6"}
         ];
 
         return blocks[index];
       }
+
+      const block = await blockchain.getBlock(0);
 
       let result = await blockchain.validateBlock(0);
       expect(result).to.equal(true);
@@ -148,14 +207,16 @@ describe('simple chain', function() {
     });
 
     it('given an invalid block in the chain then validateChain should return 1', () => {
+      // this isn't a good way to test this as it can cause the tests to fail sometimes, I should change this to use requireInject
       blockchain.getBlock = (index) => {
         const blocks = [
-          {"hash":"d9622f01bf654ecdc9ed8b957cf15e6f356d3a362a6c8a6fad61fa377ae3013b","height":0,"body":"First block in the chain - Genesis block","time":"1535717009","previousBlockHash":""},
-          {"hash":"90ebe996fa97b02e83497dd268a140c66d60bf95a8d2d597a7202f9003be2b85","height":1,"body":"Tampered Block!","time":"1535715696","previousBlockHash":"c5bacf73ba4ea6fb466701825cd91454a3647a4ba2951e0f668343ad8d48cdd6"}
+          {"hash":"d9622f01bf654ecdc9ed8b957cf15e6f356d3a362a6c8a6fad61fa377ae3013b","height":0,"body":createBlockBody("First block in the chain - Genesis block"),"time":"1535717009","previousBlockHash":""},
+          {"hash":"90ebe996fa97b02e83497dd268a140c66d60bf95a8d2d597a7202f9003be2b85","height":1,"body":createBlockBody("Tampered Block!"),"time":"1535715696","previousBlockHash":"c5bacf73ba4ea6fb466701825cd91454a3647a4ba2951e0f668343ad8d48cdd6"}
         ];
 
         return blocks[index];
       }
+      const restore = blockchain.getBlockHeight;
       blockchain.getBlockHeight = () => 1;
 
       let result = blockchain.validateChain();
@@ -164,12 +225,13 @@ describe('simple chain', function() {
     });
 
     it('given multiple invalid blocks in the chain then validateChain should return the number of invalid blocks', () => {
+      // this isn't a good way to test this as it can cause the tests to fail sometimes, I should change this to use requireInject
       blockchain.getBlock = index => {
         const blocks = [
-          {"hash":"d9622f01bf654ecdc9ed8b957cf15e6f356d3a362a6c8a6fad61fa377ae3013b","height":0,"body":"First block in the chain - Genesis block","time":"1535717009","previousBlockHash":""},
-          {"hash":"90ebe996fa97b02e83497dd268a140c66d60bf95a8d2d597a7202f9003be2b85","height":1,"body":"Tampered Block!","time":"1535715696","previousBlockHash":"c5bacf73ba4ea6fb466701825cd91454a3647a4ba2951e0f668343ad8d48cdd6"},
-          {"hash":"853cd41fa6f02f155241585699add6fafb83764860211209b09a7083ae0a18c5","height":2,"body":"Tampered Block!","time":"1535715696","previousBlockHash":"67900079669d9e0588ea1b89c9774f095af5e0fef46c66547d1e539821e5ae64"},
-          {"hash":"656f5d1685d858bbe1fb12458d02df0c18214ff533b09315d34964e4a54ada4e","height":3,"body":"Tampered Block!","time":"1535715696","previousBlockHash":"853cd41fa6f02f155241585699add6fafb83764860211209b09a7083ae0a18c5"}
+          {"hash":"d9622f01bf654ecdc9ed8b957cf15e6f356d3a362a6c8a6fad61fa377ae3013b","height":0,"body":createBlockBody("First block in the chain - Genesis block"),"time":"1535717009","previousBlockHash":""},
+          {"hash":"90ebe996fa97b02e83497dd268a140c66d60bf95a8d2d597a7202f9003be2b85","height":1,"body":createBlockBody("Tampered Block!"),"time":"1535715696","previousBlockHash":"c5bacf73ba4ea6fb466701825cd91454a3647a4ba2951e0f668343ad8d48cdd6"},
+          {"hash":"853cd41fa6f02f155241585699add6fafb83764860211209b09a7083ae0a18c5","height":2,"body":createBlockBody("Tampered Block!"),"time":"1535715696","previousBlockHash":"67900079669d9e0588ea1b89c9774f095af5e0fef46c66547d1e539821e5ae64"},
+          {"hash":"656f5d1685d858bbe1fb12458d02df0c18214ff533b09315d34964e4a54ada4e","height":3,"body":createBlockBody("Tampered Block!"),"time":"1535715696","previousBlockHash":"853cd41fa6f02f155241585699add6fafb83764860211209b09a7083ae0a18c5"}
         ];
 
         return blocks[index];
