@@ -4,7 +4,8 @@ const moment = require('moment');
 
 const simpleChain = require('./simpleChain').Blockchain;
 const Block = require('./block').Block;
-const validateAddress = require('./validateAddress')
+const validateAddress = require('./validateAddress');
+const validateStar = require('./validateStar');
 
 const app = express();
 app.use(bodyParser.json());
@@ -77,6 +78,16 @@ app.post('/block', async (req, res) => {
   const address = req.body.address || "";
   const verification = await validateAddress.getExistingValidation(address);
   const isVerified = validateAddress.isAddressVerified(verification);
+
+  if(!validateStar.isStarValid(req.body.star)){
+    const errorRes = {
+      'error': '400 the star provided is not valid, ' +
+        "Please make sure 'dec' and 'ra' have values and 'story' are set to a non-empty ascii string.",
+        'star': req.body.star
+    };
+    res.status(400).type('json').json(errorRes);
+    return;
+  }
 
   if(!isVerified){
     const errorRes = {
