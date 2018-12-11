@@ -75,3 +75,6 @@ typings/
 
 #IDEs
 .idea/
+
+#truffle / solidity
+build/
