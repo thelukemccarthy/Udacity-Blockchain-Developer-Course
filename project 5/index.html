@@ -80,6 +80,19 @@
                     <label id="display-cent"></label>
                 </div>
             </div>
+
+            <div class="left">
+                <h2>Claim Star</h2>
+                <div class="row">
+                    <label class="bold">Token Id:</label>
+                    <textarea id="sell-tokenId"></textarea>
+                </div>
+                <div class="row">
+                    <label class="bold">Amount (wei):</label>
+                    <textarea id="sell-amount"></textarea>
+                </div>
+                <button id="sell-button" onclick="sellButtonClicked()">Claim Star</button>
+            </div>
         </div>
 
         <script>
@@ -587,7 +600,7 @@
                 web3.eth.getAccounts(function(error, accounts) {
                   if (error) {
                     console.log(error);
-                    document.getElementById('error').innerText = 'An error occurred when getting you Ethereum account';
+                    document.getElementById('error').innerText = 'An error occurred when getting your Ethereum account';
                     return
                   }
 
@@ -609,6 +622,31 @@
                     console.log('claim result: ', result);
                   });
                 });
+            }
+
+            function sellButtonClicked() {
+              document.getElementById('error').innerText = '';
+              let tokenId = document.getElementById('sell-tokenId').value;
+              web3.eth.getAccounts(function(error, accounts) {
+                if (error) {
+                  console.log(error);
+                  document.getElementById('error').innerText = 'An error occurred when getting your Ethereum account';
+                  return;
+                }
+
+                let tokenId = document.getElementById('sell-tokenId').value;
+                let amount = document.getElementById('sell-amount').value;
+
+                starNotary.putStarUpForSale(tokenId, amount, { from: accounts[0], gas: 6721975 }, function (error, result) {
+                  if (error) {
+                    console.log(error);
+                    document.getElementById('error').innerText = 'An error occurred when claiming your star';
+                    return;
+                  }
+
+                  console.log('claim result: ', result);
+                });
+              });
             }
         </script>
     </body>
