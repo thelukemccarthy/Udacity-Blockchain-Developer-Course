@@ -12,18 +12,74 @@
     <body>
         <div class="container">
             <h1>Star Notary</h1>
+            <label id="error"></label>
+            <div class="left">
+                <h2>Claim Star</h2>
+                <div class="row">
+                    <label class="bold">Star Name:</label>
+                    <textarea id="star-name"></textarea>
+                </div>
+                <div class="row">
+                    <label class="bold">Star Story:</label>
+                    <textarea id="star-story"></textarea>
+                </div>
+                <div class="row">
+                    <label class="bold">Right Ascension:</label>
+                    <textarea id="ra"></textarea>
+                </div>
+                <div class="row">
+                    <label class="bold">Declination:</label>
+                    <textarea id="dec"></textarea>
+                </div>
+                <div class="row">
+                    <label class="bold">Magnitude:</label>
+                    <textarea id="mag"></textarea>
+                </div>
+                <div class="row">
+                    <label class="bold">Centaurus:</label>
+                    <textarea id="cent"></textarea>
+                </div>
 
-            <div class="row">
-                <label class="bold">Star Name:</label>
-                <textarea id="star-name"></textarea>
+                <div class="row">
+                    <label class="bold">TokenId:</label>
+                    <textarea id="tokenId"></textarea>
+                </div>
+                <button id="claim-button" onclick="claimButtonClicked()">Claim Star</button>
             </div>
 
-            <div class="row">
-                <label class="bold">Star Owner:</label>
-                <textarea id="star-owner"></textarea>
+            <div class="right">
+                <h2>Search Star</h2>
+                <div class="row">
+                    <label class="bold">TokenId:</label>
+                    <textarea id="tokenId-search"></textarea>
+                </div>
+                <button id="search-button" onclick="searchButtonClicked()">Search Star</button>
+                <h2>Star Details</h2>
+                <div class="row">
+                    <label class="bold">Name:</label>
+                    <label id="display-name"></label>
+                </div>
+                <div class="row">
+                    <label class="bold">Story:</label>
+                    <label id="display-story"></label>
+                </div>
+                <div class="row">
+                    <label class="bold">Right Ascension:</label>
+                    <label id="display-ra"></label>
+                </div>
+                <div class="row">
+                    <label class="bold">Declination:</label>
+                    <label id="display-dec"></label>
+                </div>
+                <div class="row">
+                    <label class="bold">Magnitude:</label>
+                    <label id="display-mag"></label>
+                </div>
+                <div class="row">
+                    <label class="bold">Centaurus:</label>
+                    <label id="display-cent"></label>
+                </div>
             </div>
-
-            <button id="claim-button" onclick="claimButtonClicked()">Claim Star</button>
         </div>
 
         <script>
@@ -506,102 +562,54 @@
             // Grab the contract at specified deployed address with the interface defined by the ABI
             var starNotary = StarNotary.at('0xacc140e8d8fa322a96c63478ca8329a7260e7e46');
 
-            // Get and display star info
-            // starNotary.tokenIdToStarInfo(1, function (error, result) {
-            //     if (error) {
-            //       console.log(Object.keys(error));
-            //       console.log(error);
-            //       return;
-            //     }
-            //
-            //     console.log('--------------------------------------------- result: ', result);
-            //     document.getElementById('star-name').innerText = result[0];
-            // });
+            function searchButtonClicked() {
+              document.getElementById('error').innerText = '';
+              let tokenId = document.getElementById('tokenId-search').value;
+              starNotary.tokenIdToStarInfo(tokenId, (error, result) => {
+                if (error) {
+                  document.getElementById('error').innerText = 'An error occurred when search for the star';
+                  console.log(error);
+                  return;
+                }
 
-            // Get and display star name
-            // starNotary.starName(function (error, result) {
-            //     if (!error) {
-            //         document.getElementById('star-name').innerText = result
-            //     } else {
-            //         console.log(error);
-            //     }
-            // });
-            //
-            // // Get and display star owner
-            // starNotary.starOwner(function (error, result) {
-            //     if (!error) {
-            //         document.getElementById('star-owner').innerText = result
-            //     } else {
-            //         console.log(error);
-            //     }
-            // });
+                document.getElementById('display-name').innerText = result[0];
+                document.getElementById('display-story').innerText = result[1];
+                document.getElementById('display-ra').innerText = result[2];
+                document.getElementById('display-dec').innerText = result[3];
+                document.getElementById('display-mag').innerText = result[4];
+                document.getElementById('display-cent').innerText = result[5];
+              });
+            }
 
             // Enable claim button being clicked
             function claimButtonClicked() {
+              document.getElementById('error').innerText = '';
                 web3.eth.getAccounts(function(error, accounts) {
-                    if (error) {
-                        console.log(error);
-                        return
-                    }
+                  if (error) {
+                    console.log(error);
+                    document.getElementById('error').innerText = 'An error occurred when getting you Ethereum account';
+                    return
+                  }
 
-                  starNotary.createStar('star name', 'star story', '17h 29m 1.0s', "-26° 29' 24.9",  '',  '', 2, { from: accounts[0] }, function (error, result) {
+                  let starName = document.getElementById('star-name').value;
+                  let starStory = document.getElementById('star-story').value;
+                  let ra = document.getElementById('ra').value;
+                  let dec = document.getElementById('dec').value;
+                  let mag = document.getElementById('mag').value;
+                  let cent = document.getElementById('cent').value;
+                  let tokenId = document.getElementById('tokenId').value;
+
+                  starNotary.createStar(starName, starStory, ra, dec,  mag, cent, tokenId, { from: accounts[0], gas: 6721975 }, function (error, result) {
                     if (error) {
-                      console.log('Error handled by call back function:');
-                      console.log('Keys: ', typeof(error));
                       console.log(error);
-                      console.log(error.Error);
+                      document.getElementById('error').innerText = 'An error occurred when claiming your star';
                       return;
                     }
 
                     console.log('claim result: ', result);
                   });
-                    // starNotary.claimStar(function (error, result) {
-                    //     if (!error) {
-                    //         // var starClaimedEvent = starNotary.starClaimed({from: account});
-                    //       console.log('claim result: ', result);
-                    //       var starClaimedEvent = starNotary.starClaimed({from: account});
-                    //         starClaimedEvent.watch(function(error, result) {
-                    //             if (!error) {
-                    //                 console.log('watching for star claimed event is failing');
-                    //             } else {
-                    //               console.log('Inner Claim Result: ', result);
-                    //               //location.reload();
-                    //             }
-                    //         });
-                    //     } else {
-                    //         console.log('Inner Error:', error);
-                    //     }
-                    // });
-                   
                 });
             }
-            // Enable claim button being clicked
-            // function claimButtonClicked() {
-            //   web3.eth.getAccounts(function(error, accounts) {
-            //     if (error) {
-            //       console.log(error);
-            //       return
-            //     }
-            //     var account = accounts[0];
-            //     starNotary.createStar.sendTransaction('star name', 'star story', '17h 29m 1.0s', "-26° 29' 24.9",  '',  '', 2, function (error, result) {
-            //       if (!error) {
-            //         console.log('Outer Result: ', result);
-            //         var createStarEvent = starNotary.createStar('star name', 'star story', '17h 29m 1.0s', "-26° 29' 24.9",  '',  '', 2, {from: account});
-            //         createStarEvent.watch(function(error, result) {
-            //           if (!error) {
-            //             //location.reload();
-            //             console.log('Inner Result: ', result);
-            //           } else {
-            //             console.log('watching for star claimed event is failing');
-            //           }
-            //         });
-            //       } else {
-            //         console.log(error);
-            //       }
-            //     });
-            //
-            //   })
-            // }
         </script>
     </body>
 </html>

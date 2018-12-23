@@ -13,6 +13,19 @@ body {
 .row {
     margin-bottom:10px;
 }
+label {
+    width: 150px;
+    display: inline-block;
+}
+.left {
+    float: left;
+    margin-right: 200px;
+}
+#error {
+    width: 100%;
+    color: red;
+    font-weight: bolder;
+}
 button {
     margin: 2em 0;
     padding: 1em 4em;
