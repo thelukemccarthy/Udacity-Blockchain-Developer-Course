@@ -18,7 +18,6 @@ contract StarNotary is ERC721 {
     mapping(uint256 => Star) public tokenIdToStarInfoMapping;
     mapping(uint256 => uint256) public starsForSale;
 
-
     function concatStrings(string _value1, string _value2) private pure returns(string) {
         bytes memory b1 = bytes(_value1);
         bytes memory b2 = bytes(_value2);
@@ -71,6 +70,8 @@ contract StarNotary is ERC721 {
 //            }
 //        }
 //        return false;
+
+        // I feel this is better than a loop because it always uses the same amount of gas
         return coordinatesUsed[concatStrings(_ra, _dec)];
     }
 
@@ -90,7 +91,6 @@ contract StarNotary is ERC721 {
         coordinatesUsed[concatStrings(_ra, _dec)] = true;
 
         mint(_tokenId);
-        // tokenIds.push(_tokenId); // this isn't needed anymore
     }
 
     function putStarUpForSale(uint256 _tokenId, uint256 _price) public { 

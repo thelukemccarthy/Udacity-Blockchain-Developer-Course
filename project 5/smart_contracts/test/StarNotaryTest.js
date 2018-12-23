@@ -106,7 +106,6 @@ contract('StarNotary', accounts => {
     describe('buying and selling stars', () => { 
         let user1 = accounts[1];
         let user2 = accounts[2];
-        let randomMaliciousUser = accounts[3];
         
         let starId = 1;
         let starPrice = web3.toWei(.01, "ether");
@@ -120,6 +119,16 @@ contract('StarNotary', accounts => {
             await contract.putStarUpForSale(starId, starPrice, {from: user1});
             
             assert.equal(await contract.starsForSale(starId), starPrice);
+        });
+
+        it('given a star has been put up for sale then starsForSale should return that was put up for sale', async () => {
+            assert.equal(await contract.ownerOf(starId), user1);
+            await contract.putStarUpForSale(starId, starPrice, {from: user1});
+            const result = await contract.starsForSale(starId);
+
+            // BigNumber is returned
+            assert.equal(result.s, 1);
+            assert.equal(result.e, 16);
         });
 
         describe('user2 can buy a star that was put up for sale', () => { 
