@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Government Gift Registry</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1 style="text-align: center;">Government Gift Registry</h1>
+        <hr>
+        <p style="text-align: center;">Prove gifts have been registered given to government employyees using the Ethereum blockchain.</p>
+    </div>
+
+<!--    gift.description,-->
+<!--    gift.value,-->
+<!--    gift.status,-->
+<!--    gift.giftGiver,-->
+<!--    gift.giftReceiver,-->
+<!--    gift.giftApprover-->
+
+    <div id="ftc-harvest">
+        <h2>Gift Overview</h2>
+        <div class="form-group">
+            Gift ID
+            <br>
+            <input class="input-field" type="number" id="sku" name="sku" value=1><br>
+            <div class=button-div>
+                <button id="fetch-gift" data-id="11">Fetch Gift</button>
+            </div>
+            Description
+            <br>
+            <input type="text" id="gift-description" name="" disabled><br>
+            Value
+            <br>
+            <input type="text" id="" name="" disabled><br>
+            Status
+            <br>
+            <input type="text" id="" name="" disabled><br>
+            Gift Giver Address
+            <br>
+            <input type="text" id="" name="" disabled><br>
+            Gift Receiver Address
+            <br>
+            <input type="text" id="" name="" disabled><br>
+            Gift Approver Address
+            <br>
+            <input type="text" id="" name="" disabled><br>
+        </div>
+        <div class=form-break></div>
+        <h2>Farm Details</h2>
+        <div class="form-group">
+            Farmer ID
+            <br>
+            <input type="text" id="originFarmerID" name="originFarmerID" value="0x99c289eb2aacec289631a5ddf62cf27a63d4494f"
+                size="50"><br>
+            Farm Name
+            <br>
+            <input type="text" id="originFarmName" name="originFarmName" value="John Doe"><br>
+            Farm Information
+            <br>
+            <input type="text" id="originFarmInformation" name="originFarmInformation" value="Yarra Valley"><br>
+            Farm Latitude
+            <br>
+            <input type="text" id="originFarmLatitude" name="originFarmLatitude" value="-38.239770"><br>
+            Farm Longitude
+            <br>
+            <input type="text" id="originFarmLongitude" name="originFarmLongitude" value="144.341490"><br>
+            <br>
+            <button class="btn-harvest" id="button" type="button" data-id="1">Harvest</button>
+            <button class="btn-process" id="button" type="button" data-id="2">Process</button>
+            <button class="btn-pack" id="button" type="button" data-id="3">Pack</button>
+            <button class="btn-forsale" id="button" type="button" data-id="4">ForSale</button>
+        </div>
+        <div class=form-break></div>
+        <h2>Product Details</h2>
+        <div class="form-group">
+            Product Notes
+            <br>
+            <input type="text" id="productNotes" name="productNotes" value="Best beans for Espresso" size="60"><br>
+            Product Price
+            <br>
+            <input type="number" id="productPrice" name="productPrice" value=1>ETH<br>
+            Distributor ID
+            <br>
+            <input type="text" id="distributorID" name="distributorID" value="0xf1b1bcd24dad92303dd9fe78be639f7bcf9c238d"
+                size="50">
+            <br>
+            Retailer ID
+            <br>
+            <input type="text" id="retailerID" name="retailerID" value="0x0fb2bfefd526966c87efa19f6693d50971763fc2"
+                size="50"><br>
+            Distributor ID
+            <br>
+            <input type="text" id="consumerID" name="consumerID" value="0x5d777e9127b28fb119e81a6304278a0a21bef1c4"
+                size="50"><br>
+            <br>
+            <button class="btn-buy" id="button" type="button" data-id="5">Buy</button>
+            <button class="btn-ship" id="button" type="button" data-id="6">Ship</button>
+            <button class="btn-receive" id="button" type="button" data-id="7">Receive</button>
+            <button class="btn-purchase" id="button" type="button" data-id="8">Purchase</button>
+        </div>
+        <div class=form-break></div>
+        <hr>
+    </div>
+
+    <h2>Gift History<span id="gift-history"></span></h2>
+    <div>
+        <ul id="ftc-events">
+            <!-- Events will appear here from app.js -->
+        </ul>
+        <br>
+        <hr>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- <script src="js/web3.min.js"></script> -->
+    <script src="js/truffle-contract.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
